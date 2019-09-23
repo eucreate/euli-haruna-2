@@ -14,6 +14,7 @@ if (count($works_player) > 0) {
     $worksVariationUrl = $row["works_variation_url"];
     $worksVariationFree1 = $row["works_variation_free1"];
     $worksVariationOgpImage = $row["works_variation_ogp_image"];
+    $worksVariationPlayCount = (int)$row["play_count"];
   }
 } else {
   $filePath = "";
@@ -41,11 +42,6 @@ include_once(dirname(__FILE__) . "/../include_files/header.php");
       echo "<p>ページが見つからない、削除されている、または非公開のため、ページを表示できません。</p>\n";
       echo "<p>The page can't be displayed because the page is missing, deleted, or private.<p>\n";
     } else {
-      if ($lang === "ja") {
-        echo "<p>Select language: <a href=\"{$_SERVER['REQUEST_URI']}?lang=en-us\">English (US)</a></p>\n";
-      } else {
-        echo "<p>表示切替: <a href=\"/works/{$worksID}-{$worksVariationId}.html\">日本語</a></p>\n";
-      }
       echo "<h2>{$worksPageTitle}</h2>\n";
       foreach($works as $row) {
         echo "<h3>".$worksVariationTitle;
@@ -73,11 +69,21 @@ include_once(dirname(__FILE__) . "/../include_files/header.php");
         echo "<h4>" . $playerTitle . "</h4>\n";
         if ($filePathInfo["extension"] == "mp3") {
     ?>
+    <div id="jsPlayer"></div>
+    <script>
+    var audioFileUrl = 'https://' + window.location.host + '<?php echo $filePath; ?>';
+    var imagesFileUrl = 'https://' + window.location.host + '/images/';
+    var postParam = [<?php echo $worksVariationId; ?>];
+    </script>
+    <script src="/js/player.js"></script>
+    <noscript>
     <audio src="<?php echo $filePath; ?>" controls>
       <p>音声を再生するには、audioタグをサポートしたブラウザが必要です。</p>
-      <p>Your browser does not support the audio tag.</p>
     </audio>
+    </noscript>
     <?php
+      // 再生数表示
+      echo "<p>再生回数 " . number_format($worksVariationPlayCount) . "</p>\n";
           // Copy remote file locally to scan with getID3()
           require_once('../getid3/getid3.php');
           $getID3 = new getID3;
